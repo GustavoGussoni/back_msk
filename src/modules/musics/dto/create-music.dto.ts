@@ -30,8 +30,4 @@ export class CreateMusicDto {
   @IsNotEmpty()
   @IsOptional()
   music_url: string | null;
-
-  @IsString()
-  @IsNotEmpty()
-  user_id?: string;
 }

@@ -7,9 +7,14 @@ import { Music } from '../../entities/music.entity';
 export class MusicsInMemoryRepository implements MusicsRepository {
   private database: Music[] = [];
 
-  async create(data: CreateMusicDto): Promise<Music> {
+  async create(data: CreateMusicDto, userId: string): Promise<Music> {
     const newMusic = new Music();
-    Object.assign(newMusic, { ...data });
+    Object.assign(newMusic, {
+      ...data,
+      userId: userId,
+      cover_image: data.cover_image || null,
+      music_url: data.music_url || null,
+    });
 
     this.database.push(newMusic);
 
