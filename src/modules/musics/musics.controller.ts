@@ -9,11 +9,14 @@ import {
   Query,
   UseGuards,
   Request,
+  UseInterceptors,
+  UploadedFiles,
 } from '@nestjs/common';
 import { MusicsService } from './musics.service';
 import { CreateMusicDto } from './dto/create-music.dto';
 import { UpdateMusicDto } from './dto/update-music.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 
 @Controller('musics')
 export class MusicsController {
@@ -36,15 +39,34 @@ export class MusicsController {
     return this.musicsService.findOne(id);
   }
 
-  @Patch(':id')
-  @UseGuards(JwtAuthGuard)
-  update(@Param('id') id: string, @Body() updateMusicDto: UpdateMusicDto) {
-    return this.musicsService.update(id, updateMusicDto);
+  // @Patch('id')
+  // @UseGuards(JwtAuthGuard)
+  // update(@Param('id') id: string, @Body() updateMusicDto: UpdateMusicDto) {
+  //   return this.musicsService.update(id, updateMusicDto);
+  // }
+
+  @Patch('upload/:id')
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      { name: 'cover_image', maxCount: 1 },
+      { name: 'music', maxCount: 1 },
+    ]),
+  )
+  upload(
+    @UploadedFiles()
+    files: {
+      cover_image?: Express.Multer.File[];
+      music?: Express.Multer.File[];
+    },
+    @Param('id') id: string,
+  ) {
+    const { cover_image, music } = files;
+    return this.musicsService.upload(cover_image[0], music[0], id);
   }
 
-  @Delete(':id')
-  @UseGuards(JwtAuthGuard)
-  remove(@Param('id') id: string) {
-    return this.musicsService.remove(id);
-  }
+  // @Delete(':id')
+  // @UseGuards(JwtAuthGuard)
+  // remove(@Param('id') id: string) {
+  //   return this.musicsService.remove(id);
+  // }
 }

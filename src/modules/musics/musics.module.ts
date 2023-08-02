@@ -1,12 +1,34 @@
-import { Module } from '@nestjs/common';
+import { BadRequestException, Module } from '@nestjs/common';
 import { MusicsService } from './musics.service';
 import { MusicsController } from './musics.controller';
 import { MusicsRepository } from './repositories/music.repository';
 import { MusicsInMemoryRepository } from './repositories/in-memory/musics.in-memory.repository';
 import { PrismaService } from 'src/database/prisma.service';
 import { MusicsPrismaRepository } from './repositories/prisma/musics-prisma.repository';
+import { MulterModule } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
 
 @Module({
+  imports: [
+    MulterModule.register({
+      storage: diskStorage({
+        destination: './tmp',
+        filename: (_, file, callback) => {
+          callback(null, file.originalname);
+        },
+      }),
+      fileFilter: (_, file, callBack) => {
+        if (file.mimetype === 'image/jpeg' || file.mimetype === 'audio/mpeg') {
+          callBack(null, true);
+        } else {
+          callBack(
+            new BadRequestException('Only jpeg and mp3 format allowed!'),
+            false,
+          );
+        }
+      },
+    }),
+  ],
   controllers: [MusicsController],
   providers: [
     MusicsService,
