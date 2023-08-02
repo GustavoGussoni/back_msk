@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { MusicsRepository } from '../music.repository';
 import { CreateMusicDto } from '../../dto/create-music.dto';
 import { Music } from '../../entities/music.entity';
+import { UpdateMusicDto } from '../../dto/update-music.dto';
 
 @Injectable()
 export class MusicsInMemoryRepository implements MusicsRepository {
@@ -39,5 +40,9 @@ export class MusicsInMemoryRepository implements MusicsRepository {
       return this.groupBy(this.database, group);
     }
     return this.database;
+  }
+
+  update(data: UpdateMusicDto, musicId: string): Promise<Music> {
+    throw new Error('Method not implemented.');
   }
 }
