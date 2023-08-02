@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateMusicDto } from './dto/create-music.dto';
 import { UpdateMusicDto } from './dto/update-music.dto';
 import { MusicsRepository } from './repositories/music.repository';
@@ -7,9 +7,12 @@ import { MusicsRepository } from './repositories/music.repository';
 export class MusicsService {
   constructor(private musicRepository: MusicsRepository) {}
 
-  async create(createMusicDto: CreateMusicDto) {
-    const music = await this.musicRepository.create(createMusicDto);
-    return music;
+  async create(createMusicDto: CreateMusicDto, userId: string) {
+    const createMusic = await this.musicRepository.create(
+      createMusicDto,
+      userId,
+    );
+    return createMusic;
   }
 
   async findAll(group: string | undefined) {
@@ -18,6 +21,8 @@ export class MusicsService {
 
   async findOne(id: string) {
     const findMusic = await this.musicRepository.findOne(id);
+
+    // if (!findMusic) throw new NotFoundException('Music not found!');
 
     return findMusic;
   }
