@@ -6,7 +6,9 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-
+  app.enableCors({
+    origin: 'http://localhost:3000',
+  });
   const config = new DocumentBuilder()
     .setTitle('Musics app')
     .setDescription('An API to listen to your collection musics')
@@ -20,11 +22,6 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-
-  app.enableCors({
-    origin: 'http://localhost:3001',
-  });
-
   app.useGlobalPipes(
     new ValidationPipe({ whitelist: true }),
     new ValidationPipe({
@@ -32,6 +29,6 @@ async function bootstrap() {
       transformOptions: { groups: ['transform'] },
     }),
   );
-  await app.listen(3000);
+  await app.listen(3001);
 }
 bootstrap();
