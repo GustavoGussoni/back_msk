@@ -21,7 +21,6 @@ import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
 
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 
-
 @ApiTags('musics')
 @Controller('musics')
 export class MusicsController {
@@ -63,6 +62,7 @@ export class MusicsController {
   @UseGuards(JwtAuthGuard)
   remove(@Param('id') id: string) {
     return this.musicsService.remove(id);
+  }
 
   @Patch('upload/:id')
   @UseInterceptors(
@@ -82,6 +82,4 @@ export class MusicsController {
     const { cover_image, music } = files;
     return this.musicsService.upload(cover_image[0], music[0], id);
   }
-
-  
 }
